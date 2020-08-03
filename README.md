@@ -14,3 +14,5 @@ $ curl -d '{"url":"https://google.com"}' -H 'Content-Type: application/json' -X 
 ```
 
 ## Then navigate to the "short" url and be amazed at the redirection!
+
+# Run tests with `make test`
