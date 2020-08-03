@@ -1,4 +1,9 @@
 # This service is live in a 'dev' stage. 
+
+
+## Run tests with `$ make test`
+
+
 ### Entry point for the app is `handler.py` for anyone new to serverless
 
 ## Feel Free to test with a curl request like this
@@ -14,5 +19,3 @@ $ curl -d '{"url":"https://google.com"}' -H 'Content-Type: application/json' -X 
 ```
 
 ## Then navigate to the "short" url and be amazed at the redirection!
-
-# Run tests with `make test`
