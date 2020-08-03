@@ -1,0 +1,59 @@
+service: short-url-py
+
+provider:
+  name: aws
+  runtime: python3.8
+  region: us-west-2
+  environment:
+    DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+
+package:
+  exclude:
+    - handler_test.py
+    - responder_test.py
+    - makefile
+
+functions:
+  shorten:
+    handler: handler.shorten
+    events:
+      - http:
+          path: /
+          method: post
+          cors: true
+  redirect:
+    handler: handler.redirect
+    events:
+      - http:
+          path: /{id}
+          method: get
+          cors: true
+
+resources:
+  Resources:
+    TodosDynamoDbTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+
+plugins:
+  - serverless-python-requirements
+custom:
+  pythonRequirements:
+    dockerizePip: true
